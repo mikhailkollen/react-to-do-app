@@ -1,0 +1,82 @@
+input[type="checkbox"] {
+  border: 2px solid #d3d3d3;
+  margin-right: 20px;
+  appearance: none;
+  background-image: url("./assets/check-icon.svg");
+  width: 21px;
+  height: 21px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-size: 1200%;
+  background-repeat: no-repeat;
+  transition: background 0.3s ease-in-out;
+}
+
+input[type="checkbox"]:checked {
+  padding: 6px;
+
+  background-repeat: no-repeat;
+  background-color: #d3d3d3;
+  background-position: 40% 60%;
+  background-size: auto;
+  background-repeat: no-repeat;
+  transition: background 0.3s ease-in-out;
+}
+
+input[type="checkbox"]:checked:focus {
+  outline: none;
+  border: 2px solid #d3d3d3;
+  background-image: none;
+  background-color: #ffffff;
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  border: none;
+  background-color: #3c86f4;
+  background-image: url("./assets/check-icon.svg");
+  background-position: 45% 60%;
+  background-size: 70%;
+  background-repeat: no-repeat;
+}
+
+.list-item-tag-container {
+  width: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-self: flex-start;
+  font-size: 12px;
+  font-family: "Nunito", sans-serif;
+}
+
+.task-tag-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.deadline {
+  font-family: "Nunito", sans-serif;
+  color: #838383;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+@media only screen and (min-width: 1080px) {
+  input[type="checkbox"]:checked:hover {
+    border: 2px solid #d3d3d3;
+    background-image: none;
+    background-color: #ffffff;
+  }
+  input[type="checkbox"]:hover {
+    border: none;
+    background-color: #3c86f4;
+    background-image: url("./assets/check-icon.svg");
+    background-position: 45% 60%;
+    background-size: 70%;
+    background-repeat: no-repeat;
+  }
+}

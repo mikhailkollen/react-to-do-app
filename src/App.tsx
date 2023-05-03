@@ -1,35 +1,120 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useCallback, useEffect, useRef, useState } from "react";
+import AllLists from "./components/AllLists/AllLists";
+import Button from "./components/Button/Button";
+import { Modal } from "./components/Modal/Modal";
+import { WeatherWidget } from "./components/WeatherWidget/WeatherWidget";
+import { filterTodayTasks, checkIfModalShownToday, sortTasksByUpdatedAt } from "./utils";
+import TodayTasksModal from "./components/TodayTasksModal/TodayTasksModal";
+import "./styles/css-reset.css";
+import "./styles/index.css";
+import { Task, Tasks } from "./types";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [allTasks, setAllTasks] = useState<Tasks>([]);
+  const [filteredTasks, setFilteredTasks] = useState<Tasks>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTodayTasksModalOpen, setIsTodayTasksModalOpen] = useState(false);
+  const [todayTasks, setTodayTasks] = useState<Tasks>([]);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    async function getTasksFromTheServer() {
+      const API_URL = import.meta.env.VITE_DATA_API_URL;
+      try {
+        const response = await fetch(API_URL, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          cache: "no-cache",
+        });
+        const tasks = await response.json();
+        if (tasks) {
+          setAllTasks(sortTasksByUpdatedAt(tasks));
+          setTodayTasks(filterTodayTasks(tasks));
+        }
+      } catch (error) {
+        console.error("Error fetching tasks", error);
+      }
+    }
+    getTasksFromTheServer();
+
+    return () => { };
+  }, []);
+
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchInputRef.current?.value, allTasks]);
+
+
+  useEffect(() => {
+    if (checkIfModalShownToday() === false && todayTasks.length > 0) {
+      setIsTodayTasksModalOpen(true);
+    }
+
+    return () => { };
+  }, [allTasks]);
+
+  const handleSearch = useCallback(() => {
+    const inputValue = searchInputRef.current?.value;
+    const searchTasks = allTasks.filter((task: Task) =>
+      task.title.toLowerCase().includes(inputValue!.toLowerCase())
+    );
+    setFilteredTasks(sortTasksByUpdatedAt(searchTasks));
+  }, [allTasks, searchInputRef]);
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setIsTodayTasksModalOpen(false);
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app">
+      {(isModalOpen || isTodayTasksModalOpen) && (
+        <div
+          className="overlay"
+          onClick={closeModal}
+        />
+      )}
+      
+      {isModalOpen && (
+        <Modal
+          setAllTasks={setAllTasks}
+          allTasks={allTasks}
+          setIsModalOpen={setIsModalOpen}
+        />
+      )}
+
+      {isTodayTasksModalOpen && (
+        <TodayTasksModal
+          todayTasks={todayTasks}
+          setIsTodayTasksModalOpen={setIsTodayTasksModalOpen}
+        />
+      )}
+
+      <div className="header">
+        <div className="widgets-container">
+          <h1 className="app-title">To Do List</h1>
+          <WeatherWidget />
+        </div>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search Task"
+            ref={searchInputRef}
+            onInput={handleSearch}
+          />
+          <Button
+            text="+ New Task"
+            onClick={() => setIsModalOpen(true)}
+            className="add-task-button"
+          />
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <AllLists allTasks={filteredTasks} setAllTasks={setAllTasks} />
+    </div>
+  );
 }
 
-export default App
+export default App;
