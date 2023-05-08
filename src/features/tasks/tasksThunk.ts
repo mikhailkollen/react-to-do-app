@@ -21,8 +21,9 @@ export const getTasks = createAsyncThunk(
 
 export const addTask = createAsyncThunk('tasks/addTask', async (task: Task) => {
   const response = await addTaskToTheServer(task);
-  
-  return { ...task, _id: response._id, updatedAt: response.updatedAt };
+  const newTask = { ...task, _id: response._id, updatedAt: response.updatedAt };
+  localStorage.setItem("updatedAt", JSON.stringify(newTask.updatedAt));
+  return newTask;
   
 });
 
@@ -35,6 +36,7 @@ export const deleteTask = createAsyncThunk(
     });
     const data = await response.json();
     console.log(data);
+    localStorage.setItem("updatedAt", JSON.stringify(data.updatedAt));
     return data;
   } catch (error) {
     console.log(error);
@@ -56,6 +58,7 @@ export const updateTask = createAsyncThunk(
       }
     );
     const data = await response.json();
+    localStorage.setItem("updatedAt", JSON.stringify(data.updatedAt));
     console.log(data);
     return data;
   }

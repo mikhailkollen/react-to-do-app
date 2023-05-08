@@ -1,14 +1,14 @@
 import { tagLabels } from "../../utils";
-// import { addTaskToTheServer } from "../../utils";
-import { ModalProps, Task } from "../../types";
+import { Task } from "../../types";
 import "./Modal.css";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setAllTasks, setIsModalOpen } from "../../features/tasks/tasksSlice";
+import { setIsModalOpen } from "../../features/tasks/tasksSlice";
 import { addTask as addTaskToTheServer, updateTask as updateTaskOnTheServer } from "../../features/tasks/tasksThunk";
 
 export const Modal = () => {
-  const [textInput, setTextInput] = useState("");
+  const editedTask = useAppSelector((state) => state.tasks.editedTask);
+  const [textInput, setTextInput] = useState(editedTask ? editedTask.title : "");
   const [invalidInput, setInvalidInput] = useState(false);
   const tagRadioRefs = useRef<HTMLInputElement[]>([]);
   const modalDateRef = useRef<HTMLInputElement>(null);
@@ -24,9 +24,21 @@ export const Modal = () => {
     dispatch(setIsModalOpen(false));
   };
 
-  const editedTask = useAppSelector((state) => state.tasks.editedTask);
+  useEffect(() => {
+    if (editedTask) {
+      setTextInput(editedTask.title);
+      modalDateRef.current!.value = editedTask.date.split("T")[0];
+      const selectedTagRadio = tagRadioRefs.current.find((radio) => radio.value === editedTask.tag);
+      if (selectedTagRadio) {
+        selectedTagRadio.checked = true;
+      }
 
-  
+    }
+    return () => { };
+  }, [editedTask]);
+
+
+
 
   const addTask = () => {
     const dateValueParsed = new Date(modalDateRef.current!.value);
@@ -36,7 +48,7 @@ export const Modal = () => {
       return;
     }
     const selectedTagRadio = tagRadioRefs.current.find((radio) => radio.checked);
-  const selectedTag = selectedTagRadio ? selectedTagRadio.value : tagLabels[0].tag;
+    const selectedTag = selectedTagRadio ? selectedTagRadio.value : tagLabels[0].tag;
 
     const newTask: Task = {
       title: textInput,
@@ -57,7 +69,7 @@ export const Modal = () => {
       return;
     }
     const selectedTagRadio = tagRadioRefs.current.find((radio) => radio.checked);
-  const selectedTag = selectedTagRadio ? selectedTagRadio.value : tagLabels[0].tag;
+    const selectedTag = selectedTagRadio ? selectedTagRadio.value : tagLabels[0].tag;
 
     const updatedTask: Task = {
       ...editedTask!,
@@ -71,17 +83,18 @@ export const Modal = () => {
   };
 
   const handleTagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  const selectedTag = event.target.value;
+    const selectedTag = event.target.value;
 
-  tagRadioRefs.current.forEach((tagRadioRef) => {
-    const tagLabelElement = tagRadioRef.parentElement as HTMLLabelElement;
-    if (tagRadioRef.value === selectedTag) {
-      tagLabelElement.style.border = `1px solid ${tagLabels.find((tagLabel) => tagLabel.tag === selectedTag)?.color}`;
-    } else {
-      tagLabelElement.style.border = "none";
-    }
-  });
-};
+    tagRadioRefs.current.forEach((tagRadioRef) => {
+      const tagLabelElement = tagRadioRef.parentElement as HTMLLabelElement;
+      if (tagRadioRef.value === selectedTag) {
+        tagLabelElement.style.border = `1px solid ${tagLabels.find((tagLabel) => tagLabel.tag === selectedTag)?.color}`;
+        tagRadioRef.checked = true; 
+      } else {
+        tagLabelElement.style.border = "none";
+      }
+    });
+  };
 
   return (
     <form
@@ -95,7 +108,7 @@ export const Modal = () => {
         }
       }}
     >
-      <label className="modal-title">{editedTask ? "Edit the task": "Add New Task"}</label>
+      <label className="modal-title">{editedTask ? "Edit the task" : "Add New Task"}</label>
       <input
         type="text"
         placeholder="Task Title"
@@ -114,7 +127,7 @@ export const Modal = () => {
               className="tag-label"
               key={tagLabel.id}
               style={{
-                border: tagLabels[0].tag === tagLabel.tag ? `1px solid ${tagLabel.color}` : "none", backgroundColor: tagLabel.bgColor, color: tagLabel.color,
+                border: editedTask ? editedTask?.tag === tagLabel.tag ? `1px solid ${tagLabel.color}` : "none" : tagLabels[0].tag === tagLabel.tag ? `1px solid ${tagLabel.color}` : "none", backgroundColor: tagLabel.bgColor, color: tagLabel.color,
               }}
             >
               <input

@@ -4,18 +4,16 @@ import AllLists from "./components/AllLists/AllLists";
 import Button from "./components/Button/Button";
 import { Modal } from "./components/Modal/Modal";
 import { WeatherWidget } from "./components/WeatherWidget/WeatherWidget";
-import { filterTodayTasks, checkIfModalShownToday, sortTasksByUpdatedAt, tagLabels } from "./utils";
+import { tagLabels } from "./utils";
 import TodayTasksModal from "./components/TodayTasksModal/TodayTasksModal";
 import "./styles/css-reset.css";
 import "./styles/index.css";
-import { Task, Tasks } from "./types";
 import { filterTasks, setIsTodayTasksModalOpen, setIsModalOpen } from "./features/tasks/tasksSlice";
 import { getTasks } from "./features/tasks/tasksThunk";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 
 
 function App() {
-
   const [searchParams, setSearchParams] = useSearchParams({});
   const searchValue = searchParams.get('q');
   const location = useLocation();
@@ -32,6 +30,17 @@ function App() {
   useEffect(() => {
     dispatch(getTasks());
     return () => { };
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('storage', () => {
+      dispatch(getTasks());
+    });
+    return () => {
+      window.removeEventListener('storage', () => {
+        dispatch(getTasks());
+      });
+    };
   }, []);
 
   useEffect(() => {
@@ -82,26 +91,26 @@ function App() {
 
   const tagsInputs = useMemo(() => {
     return tagLabels.map((tag) => (
-              <label
-                key={tag.id}
-                className="tag-label"
-                style={{
-                  border: currentTag === tag.tag ? `1px solid ${tag.color}` : "none",
-                  backgroundColor: tag.bgColor,
-                  color: tag.color,
-                  transition: "border 0.6s ease-in-out",
-                }}
-              >
-                {tag.tag}
-                <input
-                  type="radio"
-                  name="tag"
-                  value={tag.tag}
-                  className="tag-filter-button"
-                  onClick={(e) => handleTagFilterChange(e)}
-                />
-              </label>
-            ));
+      <label
+        key={tag.id}
+        className="tag-label"
+        style={{
+          border: currentTag === tag.tag ? `1px solid ${tag.color}` : "none",
+          backgroundColor: tag.bgColor,
+          color: tag.color,
+          // transition: "border 0.6s ease-in-out",
+        }}
+      >
+        {tag.tag}
+        <input
+          type="radio"
+          name="tag"
+          value={tag.tag}
+          className="tag-filter-button"
+          onClick={(e) => handleTagFilterChange(e)}
+        />
+      </label>
+    ));
   }, [currentTag]);
   return (
     <div className="app">
@@ -144,10 +153,9 @@ function App() {
           <div className="tag-filter">
             {tagsInputs}
             <button className="tag-label filter-all-tasks-button" onClick={resetTags}
-            style={{
-                  border: currentTag === "" ? `1px solid #555` : "none",
-                  
-                }}
+              style={{
+                border: currentTag === "" ? `1px solid #838383` : "none",
+              }}
             >all</button>
           </div>
         </div>

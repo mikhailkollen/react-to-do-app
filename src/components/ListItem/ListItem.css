@@ -101,16 +101,17 @@ input[type="checkbox"]:focus {
   transition: all 0.3s ease-in-out;
 }
 
-.delete-button:focus {
+.list-item-button:focus,
+.filter-all-tasks-button:focus {
   outline: none;
-}
-
-.edit-button:hover svg path {
-  stroke: #3c86f4;
 }
 
 .delete-button:focus svg path {
   fill: #0053cf;
+}
+
+.edit-button:focus svg path {
+  stroke: #0053cf;
 }
 
 .delete-button:active svg path {
@@ -145,5 +146,9 @@ input[type="checkbox"]:focus {
   }
   .delete-button:hover svg path {
     fill: #3c86f4;
+  }
+
+  .edit-button:hover svg path {
+    stroke: #3c86f4;
   }
 }
