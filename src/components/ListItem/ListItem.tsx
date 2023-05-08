@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from "react";
-import { createPortal } from "react-dom";
-import { tagLabels,sortTasksByUpdatedAt, formatDate } from "../../utils";
-import { ListItemProps, Task } from "../../types";
+import { tagLabels, formatDate } from "../../utils";
+import { ListItemProps } from "../../types";
 import "./ListItem.css";
 import Button from "../Button/Button";
 import CheckIcon from "./assets/check-icon.svg";
