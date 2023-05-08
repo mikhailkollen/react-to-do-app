@@ -1,21 +1,21 @@
-import { setModalShown, setCorrectTitle } from "../../utils";
+import { setCorrectTitle } from "../../utils";
 import { ListItem } from "../ListItem/ListItem";
 import Button from "../Button/Button";
-import { Task, TodayTasksModalProps } from "../../types";
+import { Task } from "../../types";
 import "./TodayTasksModal.css"
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
+import { setIsTodayTasksModalOpen } from "../../features/tasks/tasksSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
-
-const TodayTasksModal = ({ todayTasks, setIsTodayTasksModalOpen }: TodayTasksModalProps) => {
-
-  useEffect(() => {
-    setModalShown();
-    return () => { };
-  }, []);
+const TodayTasksModal = () => {
+  const dispatch = useAppDispatch();
 
   const closeModal = useCallback(() => {
-    setIsTodayTasksModalOpen(false);
-  }, [setIsTodayTasksModalOpen]);
+    dispatch(setIsTodayTasksModalOpen(false));
+
+  }, [dispatch]);
+
+  const todayTasks = useAppSelector((state) => state.tasks.todayTasks);
 
   return (
     <div className="today-tasks-modal modal">
@@ -30,7 +30,7 @@ const TodayTasksModal = ({ todayTasks, setIsTodayTasksModalOpen }: TodayTasksMod
           );
         })}
       </ul>
-      <Button className="today-tasks-modal-button" text="OK" onClick={closeModal} />
+      <Button className="today-tasks-modal-button" text="OK" onClick={() => closeModal()} />
     </div>
   );
 };

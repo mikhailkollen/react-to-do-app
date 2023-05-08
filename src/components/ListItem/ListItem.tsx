@@ -1,11 +1,17 @@
 import { useCallback, useMemo } from "react";
-import { tagLabels, updateTaskOnTheServer, deleteTaskFromTheServer, sortTasksByUpdatedAt, formatDate } from "../../utils";
+import { createPortal } from "react-dom";
+import { tagLabels,sortTasksByUpdatedAt, formatDate } from "../../utils";
 import { ListItemProps, Task } from "../../types";
 import "./ListItem.css";
 import Button from "../Button/Button";
 import CheckIcon from "./assets/check-icon.svg";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { deleteTask as deleteTaskFromTheServer, updateTask as updateTaskOnTheServer } from "../../features/tasks/tasksThunk";
+import { setAllTasks, editTask } from "../../features/tasks/tasksSlice";
 
-export const ListItem = ({ task, isModalTask, allTasks, setAllTasks }: ListItemProps) => {
+export const ListItem = ({ task, isModalTask }: ListItemProps) => {
+  const allTasks = useAppSelector((state) => state.tasks.allTasks);
+  const dispatch = useAppDispatch();
   const tag = useMemo(() => tagLabels.find((item) => item.tag === task.tag), [task.tag]);
   const style = useMemo(
     () => ({
@@ -15,24 +21,21 @@ export const ListItem = ({ task, isModalTask, allTasks, setAllTasks }: ListItemP
     [tag?.bgColor, tag?.color]
   );
 
-const changeStatus = useCallback((task: Task) => {
-  const updatedTask = { ...task, isCompleted: !task.isCompleted };
-  updateTaskOnTheServer(updatedTask).then((updatedTask) => {
-    const newTasks = allTasks?.map((item) => (item._id === updatedTask._id ? updatedTask : item));
-    if (newTasks && setAllTasks) {
-      setAllTasks(sortTasksByUpdatedAt(newTasks));
-    }
-  });
-}, [allTasks, setAllTasks]);
+  const changeStatus = useCallback(() => {
+    dispatch(updateTaskOnTheServer({...task, isCompleted: !task.isCompleted}));
+  }, [allTasks, task, dispatch]);
+  
+  const changeTaskDetails = useCallback(() => {
+    dispatch(editTask(task))
+    // dispatch(updateTaskOnTheServer({...task, title: newTitle}));
+  }, [allTasks, task, dispatch]);
+
 
   const deleteTask = useCallback(() => {
-  const newTasks = allTasks?.filter((item) => item._id !== task._id);
-
-  (newTasks && setAllTasks) && setAllTasks(newTasks);
-  if (task._id) {
-    deleteTaskFromTheServer(task._id);
-  }
-}, [allTasks, setAllTasks]);
+  dispatch(deleteTaskFromTheServer(task._id!));
+  const updatedTasks = allTasks.filter((t) => t._id !== task._id);
+  dispatch(setAllTasks(updatedTasks));
+}, [allTasks, task, dispatch]);
 
   return (
     <li>
@@ -42,7 +45,8 @@ const changeStatus = useCallback((task: Task) => {
             type="checkbox"
             className="list-item-checkbox"
             checked={task.isCompleted}
-            onChange={() => changeStatus(task)}
+            onChange={() => changeStatus()
+            }
             style={{ backgroundImage: `url(${CheckIcon})` }}
           />
         )}
@@ -60,7 +64,13 @@ const changeStatus = useCallback((task: Task) => {
           </div>
         </div>
       </label>
-      {!task.isCompleted && !isModalTask && <Button className="delete-button" onClick={deleteTask} />}
+      {
+        !task.isCompleted && !isModalTask && (
+          <div className="item-button-container">
+            <Button className="edit-button" onClick={changeTaskDetails} />
+            <Button className="delete-button" onClick={deleteTask} />
+          </div>)
+      }
     </li>
   );
 };

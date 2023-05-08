@@ -1,45 +1,56 @@
+import {Dispatch} from "redux";
+
 type Id = string;
 type Tasks = Task[];
-type SetAllTasks = React.Dispatch<React.SetStateAction<Tasks>>;
+type SetAllTasks = Dispatch<{ type: string, payload: Tasks }>;
+
+interface TaskState {
+  allTasks: Tasks;
+  filteredTasks: Tasks;
+  todayTasks: Tasks;
+  counter: number;
+  isLoading?: boolean;
+  isTodayTasksModalOpen: boolean;
+  isModalOpen?: boolean;
+  editedTask: Task | null;
+}
 
 interface ButtonProps {
-  text?: string;
+  text?: string | number;
   onClick: () => void;
   className?: string;
+}
+
+interface Filter {
+  searchValue: string;
+  tag: string;
+
 }
 
 interface ListItemProps {
   task: Task;
   isModalTask?: boolean;
-  setAllTasks?: SetAllTasks;
   allTasks?: Tasks;
-
-
 }
 
 interface ListProps {
-  filteredTasks: Tasks;
-  allTasks: Tasks;
-  setAllTasks: SetAllTasks;
+  tasks: Tasks;
   titleText: string;
   listClassName: string;
 }
 
 interface ModalProps {
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  allTasks: Tasks;
-  setAllTasks: SetAllTasks;
+  setIsModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  allTasks?: Tasks;
+  setAllTasks?: SetAllTasks;
+  task?: Task;
 }
 
 interface TodayTasksModalProps {
-  setIsTodayTasksModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsTodayTasksModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   todayTasks: Tasks;
 }
 
-interface AllListsProps {
-  allTasks: Tasks;
-  setAllTasks: SetAllTasks;
-}
 
 interface WeatherData {
   current: {
@@ -59,9 +70,9 @@ interface Task {
   title: string;
   isCompleted: boolean;
   tag: string;
-  date: Date;
+  date: string;
   updatedAt?: Date;
 }
 
 
-export type { Task, Tasks, Id, ButtonProps, ListItemProps, SetAllTasks, ListProps, WeatherData, ModalProps, TodayTasksModalProps, AllListsProps };
+export type { Task, Tasks, Id, ButtonProps, ListItemProps, SetAllTasks, ListProps, WeatherData, ModalProps, TodayTasksModalProps, TaskState, Filter };

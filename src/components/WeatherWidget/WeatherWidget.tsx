@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { WeatherData } from "../../types";
 
 export const WeatherWidget = () => {
+  
   const API_URL = import.meta.env.VITE_WEATHER_API_BASE_URL;
   const requestUserLocation = useCallback(
   () => {

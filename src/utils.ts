@@ -7,7 +7,7 @@ export const tagLabels = [
   { id: 4, tag: "other", bgColor: "#FFECC7", color: "#EA8C00" },
 ];
 
-export const checkIfToday = (date: Date): boolean => {
+export const checkIfToday = (date: string): boolean => {
   const today = new Date();
   const checkDate = new Date(date);
   return (
@@ -17,7 +17,7 @@ export const checkIfToday = (date: Date): boolean => {
   );
 };
 
-export const checkIfTomorrow = (date: Date): boolean => {
+export const checkIfTomorrow = (date: string): boolean => {
   const today = new Date();
   const checkDate = new Date(date);
   return (
@@ -122,7 +122,7 @@ export const filterTodayTasks = (tasks: Task[]): Tasks | [] => {
   }
 };
 
-export const formatDate = (date: Date): string => {
+export const formatDate = (date: string): string => {
   if (checkIfToday(date)) {
     return "Today";
   } else if (checkIfTomorrow(date)) {
