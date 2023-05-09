@@ -7,7 +7,7 @@ type SetAllTasks = Dispatch<{ type: string, payload: Tasks }>;
 interface TaskState {
   allTasks: Tasks;
   filteredTasks: Tasks;
-  todayTasks: Tasks;
+  todayTasks: null | Tasks;
   isLoading?: boolean;
   isTodayTasksModalOpen: boolean;
   isModalOpen?: boolean;

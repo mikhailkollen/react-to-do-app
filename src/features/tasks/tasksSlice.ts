@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 import { Filter, Task, Tasks, TaskState } from "../../types";
 import { getTasks, addTask, deleteTask, updateTask } from "./tasksThunk";
 import { checkIfModalShownToday, filterTodayTasks, setModalShown, sortTasksByUpdatedAt } from "../../utils";
@@ -6,7 +6,7 @@ import { checkIfModalShownToday, filterTodayTasks, setModalShown, sortTasksByUpd
 const initialState: TaskState = {
   allTasks: [],
   filteredTasks: [],
-  todayTasks: [],
+  todayTasks: null,
   isLoading: true,
   isTodayTasksModalOpen: false,
   isModalOpen: false,
@@ -42,12 +42,19 @@ const tasksSlice = createSlice({
       state.allTasks = action.payload;
     },
     setIsTodayTasksModalOpen: (state, action: PayloadAction<boolean>) => {
-      if (action.payload === true && checkIfModalShownToday() === false && state.todayTasks.length > 0) {
+      
+      
+      if (action.payload === true && checkIfModalShownToday() === false && state.todayTasks && state.todayTasks.length > 0) {
+        console.log(current(state.todayTasks));
         state.isTodayTasksModalOpen = true;
+      } else if (state.todayTasks !== null && state.todayTasks.length === 0) {
+        console.log(current(state.todayTasks));
+        state.isTodayTasksModalOpen = false;
+        setModalShown();
       } else {
         state.isTodayTasksModalOpen = false;
       }
-      setModalShown();
+      
     },
     setIsModalOpen: (state, action: PayloadAction<boolean>) => {
       state.editedTask = action.payload ? state.editedTask : null;
@@ -81,6 +88,7 @@ const tasksSlice = createSlice({
       state.allTasks = [action.payload, ...state.allTasks];
       state.filteredTasks = sortTasksByUpdatedAt(state.allTasks);
       state.todayTasks = filterTodayTasks(state.allTasks);
+
     }
     );
     builder.addCase(addTask.rejected, (state) => {

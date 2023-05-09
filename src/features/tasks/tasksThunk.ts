@@ -1,6 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { Task } from '../../types';
-import { addTaskToTheServer } from '../../utils';
 
 const API_URL = import.meta.env.VITE_DATA_API_URL;
 
@@ -20,27 +19,37 @@ export const getTasks = createAsyncThunk(
 );
 
 export const addTask = createAsyncThunk('tasks/addTask', async (task: Task) => {
-  const response = await addTaskToTheServer(task);
-  const newTask = { ...task, _id: response._id, updatedAt: response.updatedAt };
-  localStorage.setItem("updatedAt", JSON.stringify(newTask.updatedAt));
-  return newTask;
-  
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(task),
+    });
+    const data = await response.json();
+    localStorage.setItem("updatedAt", JSON.stringify(data.updatedAt));
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 export const deleteTask = createAsyncThunk(
   'tasks/deleteTask',
   async (id: string) => {
-  try {
-    const response = await fetch(`${API_URL}${id}`, {
-      method: "DELETE",
-    });
-    const data = await response.json();
-    console.log(data);
-    localStorage.setItem("updatedAt", JSON.stringify(data.updatedAt));
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
+    try {
+      const response = await fetch(`${API_URL}${id}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      console.log(data);
+      localStorage.setItem("updatedAt", JSON.stringify(data.updatedAt));
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
   }
 );
 

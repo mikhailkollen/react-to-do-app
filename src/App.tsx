@@ -4,7 +4,7 @@ import AllLists from "./components/AllLists/AllLists";
 import Button from "./components/Button/Button";
 import { Modal } from "./components/Modal/Modal";
 import { WeatherWidget } from "./components/WeatherWidget/WeatherWidget";
-import { tagLabels } from "./utils";
+import { setModalShown, tagLabels } from "./utils";
 import TodayTasksModal from "./components/TodayTasksModal/TodayTasksModal";
 import "./styles/css-reset.css";
 import "./styles/index.css";
@@ -23,43 +23,33 @@ function App() {
   const navigate = useNavigate();
   const [currentTag, setCurrentTag] = useState<string>(location.pathname.split('/')[1]);
 
-  const { allTasks, todayTasks, isTodayTasksModalOpen, isModalOpen } = useAppSelector((state) => state.tasks);
-
+const { todayTasks, isTodayTasksModalOpen, isModalOpen } = useAppSelector((state) => state.tasks);
 
   useEffect(() => {
     dispatch(getTasks());
-    return () => { };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
-    window.addEventListener('storage', () => {
+    const handleStorageEvent = () => {
       dispatch(getTasks());
-    });
-    return () => {
-      window.removeEventListener('storage', () => {
-        dispatch(getTasks());
-      });
     };
-  }, []);
+    window.addEventListener('storage', handleStorageEvent);
+    return () => window.removeEventListener('storage', handleStorageEvent);
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(setIsTodayTasksModalOpen(true))
-    return () => { };
-  }, [todayTasks]);
-
-  useEffect(() => {
-
     handleSearch();
-    return () => { };
-  }, [searchInputRef.current?.value, allTasks]);
+  }, [todayTasks, dispatch]);
+
 
   useEffect(() => {
-    if (searchValue) {
-      searchInputRef.current!.value = searchValue;
-      dispatch(filterTasks({ searchValue: searchValue, tag: currentTag }));
+    if (searchValue && searchInputRef.current) {
+      searchInputRef.current.value = searchValue;
+      dispatch(filterTasks({ searchValue, tag: currentTag }));
     }
-    return () => { };
-  }, [searchValue, dispatch]);
+  }, [searchValue, currentTag, dispatch]);
+  
 
   const handleSearch = useCallback(() => {
     if (!searchInputRef.current) return;
@@ -68,53 +58,57 @@ function App() {
     setSearchParams({ q: encodedValue || '' });
     navigate(`/${currentTag}?q=${encodedValue}`);
     dispatch(filterTasks({ searchValue: inputValue, tag: currentTag }));
-  }, [searchInputRef, dispatch, currentTag]);
+  }, [searchInputRef, setSearchParams, navigate, currentTag, dispatch]);
 
   const openModal = useCallback(() => {
     dispatch(setIsModalOpen(true));
-  }, []);
+  }, [dispatch]);
 
   const closeModal = useCallback(() => {
     dispatch(setIsModalOpen(false));
     dispatch(setIsTodayTasksModalOpen(false))
-  }, []);
+    setModalShown();
+  }, [dispatch]);
 
-  const handleTagFilterChange = useCallback((event: any) => {
+  const resetTags = useCallback(() => {
+    const inputValue = searchInputRef.current?.value;
+    const encodedValue = encodeURIComponent(inputValue || '');
+    navigate(`/?q=${encodedValue}`);
+    setCurrentTag('');
+    dispatch(filterTasks({ tag: '', searchValue: inputValue || '' }));
+  }, [searchInputRef, navigate, setCurrentTag, dispatch]);
+
+  const tagsInputs = useMemo(() => {
+  const handleTagFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = searchInputRef.current!.value;
     const encodedValue = encodeURIComponent(inputValue);
     navigate(`/${event.target.value}?q=${encodedValue}`);
     setCurrentTag(event.target.value);
     dispatch(filterTasks({ tag: event.target.value, searchValue: inputValue }));
-  }, []);
+  };
 
-  const resetTags = useCallback(() => {
-    navigate(`/?q=${searchInputRef.current!.value}`);
-    setCurrentTag('');
-    dispatch(filterTasks({ tag: '', searchValue: searchInputRef.current!.value }));
-  }, []);
-
-  const tagsInputs = useMemo(() => {
-    return tagLabels.map((tag) => (
-      <label
-        key={tag.id}
-        className="tag-label"
-        style={{
-          border: currentTag === tag.tag ? `1px solid ${tag.color}` : "none",
-          backgroundColor: tag.bgColor,
-          color: tag.color,
-        }}
-      >
-        {tag.tag}
-        <input
-          type="radio"
-          name="tag"
-          value={tag.tag}
-          className="tag-filter-button"
-          onClick={(e) => handleTagFilterChange(e)}
-        />
-      </label>
-    ));
-  }, [currentTag]);
+  return tagLabels.map((tag) => (
+    <label
+      key={tag.id}
+      className="tag-label"
+      style={{
+        border: currentTag === tag.tag ? `1px solid ${tag.color}` : "none",
+        backgroundColor: tag.bgColor,
+        color: tag.color,
+      }}
+    >
+      {tag.tag}
+      <input
+        type="radio"
+        name="tag"
+        value={tag.tag}
+        className="tag-filter-button"
+        onChange={handleTagFilterChange}
+        checked={currentTag === tag.tag}
+      />
+    </label>
+  ));
+}, [currentTag, dispatch, navigate, searchInputRef]);
 
   return (
     <div className="app">
