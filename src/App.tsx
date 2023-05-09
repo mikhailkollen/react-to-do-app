@@ -23,8 +23,7 @@ function App() {
   const navigate = useNavigate();
   const [currentTag, setCurrentTag] = useState<string>(location.pathname.split('/')[1]);
 
-  const tasks = useAppSelector((state) => state.tasks);
-  const { allTasks, todayTasks, isTodayTasksModalOpen, isModalOpen } = tasks;
+  const { allTasks, todayTasks, isTodayTasksModalOpen, isModalOpen } = useAppSelector((state) => state.tasks);
 
 
   useEffect(() => {
@@ -51,6 +50,7 @@ function App() {
   useEffect(() => {
 
     handleSearch();
+    return () => { };
   }, [searchInputRef.current?.value, allTasks]);
 
   useEffect(() => {
@@ -58,6 +58,7 @@ function App() {
       searchInputRef.current!.value = searchValue;
       dispatch(filterTasks({ searchValue: searchValue, tag: currentTag }));
     }
+    return () => { };
   }, [searchValue, dispatch]);
 
   const handleSearch = useCallback(() => {
@@ -114,6 +115,7 @@ function App() {
       </label>
     ));
   }, [currentTag]);
+
   return (
     <div className="app">
       {(isModalOpen || isTodayTasksModalOpen) && (

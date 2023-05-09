@@ -8,7 +8,6 @@ interface TaskState {
   allTasks: Tasks;
   filteredTasks: Tasks;
   todayTasks: Tasks;
-  counter: number;
   isLoading?: boolean;
   isTodayTasksModalOpen: boolean;
   isModalOpen?: boolean;

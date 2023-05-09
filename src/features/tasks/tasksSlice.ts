@@ -1,17 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
 import { Filter, Task, Tasks, TaskState } from "../../types";
-
 import { getTasks, addTask, deleteTask, updateTask } from "./tasksThunk";
 import { checkIfModalShownToday, filterTodayTasks, setModalShown, sortTasksByUpdatedAt } from "../../utils";
-
-
 
 const initialState: TaskState = {
   allTasks: [],
   filteredTasks: [],
   todayTasks: [],
-  counter: 0,
   isLoading: true,
   isTodayTasksModalOpen: false,
   isModalOpen: false,
@@ -26,28 +21,22 @@ const tasksSlice = createSlice({
       const { searchValue, tag } = action.payload;
       if (searchValue === "" && tag === "") {
         state.filteredTasks = state.allTasks;
-        return;
       } else if (searchValue && tag) {
-      console.log("Search", action.payload.searchValue,"Tag", action.payload.tag);
-
-      const searchTasks = state.allTasks.filter((task: Task) =>
-        task.title.toLowerCase().includes(searchValue!.toLowerCase()) && task.tag === tag
-      );
-      state.filteredTasks = sortTasksByUpdatedAt(searchTasks);
+        const searchTasks = state.allTasks.filter((task: Task) =>
+          task.title.toLowerCase().includes(searchValue!.toLowerCase()) && task.tag === tag
+        );
+        state.filteredTasks = sortTasksByUpdatedAt(searchTasks);
       } else if (searchValue && !tag) {
         const searchTasks = state.allTasks.filter((task: Task) =>
-        task.title.toLowerCase().includes(searchValue.toLowerCase())
-      );
-      state.filteredTasks = sortTasksByUpdatedAt(searchTasks);
+          task.title.toLowerCase().includes(searchValue.toLowerCase())
+        );
+        state.filteredTasks = sortTasksByUpdatedAt(searchTasks);
       } else if (!searchValue && tag) {
         const searchTasks = state.allTasks.filter((task: Task) =>
-        task.tag === tag
-      );
-      state.filteredTasks = sortTasksByUpdatedAt(searchTasks);
+          task.tag === tag
+        );
+        state.filteredTasks = sortTasksByUpdatedAt(searchTasks);
       }
-    },
-    toggleTaskCompleted: (state, action: PayloadAction<Tasks>) => {
-      state.allTasks = action.payload;
     },
     setAllTasks: (state, action: PayloadAction<Tasks>) => {
       state.allTasks = action.payload;
@@ -55,22 +44,18 @@ const tasksSlice = createSlice({
     setIsTodayTasksModalOpen: (state, action: PayloadAction<boolean>) => {
       if (action.payload === true && checkIfModalShownToday() === false && state.todayTasks.length > 0) {
         state.isTodayTasksModalOpen = true;
-      }
-      if (action.payload === false) {
+      } else {
         state.isTodayTasksModalOpen = false;
-        setModalShown();
       }
+      setModalShown();
     },
     setIsModalOpen: (state, action: PayloadAction<boolean>) => {
-      if (action.payload === false) {
-        state.editedTask = null;
-      }
+      state.editedTask = action.payload ? state.editedTask : null;
       state.isModalOpen = action.payload;
     },
     editTask: (state, action: PayloadAction<Task | null>) => {
       state.editedTask = action.payload;
       state.isModalOpen = true;
-      
     },
   },
   extraReducers: (builder) => {
@@ -129,7 +114,7 @@ const tasksSlice = createSlice({
       }
       ));
       state.filteredTasks = sortTasksByUpdatedAt(state.allTasks);
-      
+
     }
     );
     builder.addCase(updateTask.rejected, (state) => {
@@ -139,5 +124,5 @@ const tasksSlice = createSlice({
   },
 });
 
-export const { toggleTaskCompleted, editTask, setAllTasks, filterTasks, setIsTodayTasksModalOpen, setIsModalOpen } = tasksSlice.actions;
+export const { editTask, setAllTasks, filterTasks, setIsTodayTasksModalOpen, setIsModalOpen } = tasksSlice.actions;
 export default tasksSlice.reducer;
