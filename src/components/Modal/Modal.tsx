@@ -7,7 +7,7 @@ import { setIsModalOpen } from "../../features/tasks/tasksSlice";
 import { addTask as addTaskToTheServer, updateTask as updateTaskOnTheServer } from "../../features/tasks/tasksThunk";
 
 export const Modal = () => {
-  const editedTask = useAppSelector((state) => state.tasks.editedTask);
+    const editedTask = useAppSelector((state) => state.tasks.editedTask);
   const [textInput, setTextInput] = useState(editedTask ? editedTask.title : "");
   const [invalidInput, setInvalidInput] = useState(false);
   const tagRadioRefs = useRef<HTMLInputElement[]>([]);
@@ -32,26 +32,20 @@ export const Modal = () => {
       if (selectedTagRadio) {
         selectedTagRadio.checked = true;
       }
-
     }
-    return () => { };
   }, [editedTask]);
 
-
-
-
   const addTask = () => {
-    const dateValueParsed = new Date(modalDateRef.current!.value);
-    if (!textInput) {
+    if (!textInput.trim()) {
       setInvalidInput(true);
-      alert("Please enter a valid task title");
       return;
     }
+    const dateValueParsed = new Date(modalDateRef.current!.value);
     const selectedTagRadio = tagRadioRefs.current.find((radio) => radio.checked);
     const selectedTag = selectedTagRadio ? selectedTagRadio.value : tagLabels[0].tag;
 
     const newTask: Task = {
-      title: textInput,
+      title: textInput.trim(),
       isCompleted: false,
       tag: selectedTag,
       date: dateValueParsed.toISOString(),
@@ -63,9 +57,8 @@ export const Modal = () => {
 
   const updateTask = () => {
     const dateValueParsed = new Date(modalDateRef.current!.value);
-    if (!textInput) {
+    if (!textInput.trim()) {
       setInvalidInput(true);
-      alert("Please enter a valid task title");
       return;
     }
     const selectedTagRadio = tagRadioRefs.current.find((radio) => radio.checked);
@@ -73,7 +66,7 @@ export const Modal = () => {
 
     const updatedTask: Task = {
       ...editedTask!,
-      title: textInput,
+      title: textInput.trim(),
       tag: selectedTag,
       date: dateValueParsed.toISOString(),
     };
@@ -89,12 +82,13 @@ export const Modal = () => {
       const tagLabelElement = tagRadioRef.parentElement as HTMLLabelElement;
       if (tagRadioRef.value === selectedTag) {
         tagLabelElement.style.border = `1px solid ${tagLabels.find((tagLabel) => tagLabel.tag === selectedTag)?.color}`;
-        tagRadioRef.checked = true; 
+        tagRadioRef.checked = true;
       } else {
         tagLabelElement.style.border = "none";
       }
     });
   };
+
 
   return (
     <form

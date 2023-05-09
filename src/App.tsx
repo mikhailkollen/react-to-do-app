@@ -62,10 +62,11 @@ function App() {
 
   const handleSearch = useCallback(() => {
     if (!searchInputRef.current) return;
-    setSearchParams({ q: searchInputRef.current?.value || '' });
-    const inputValue = searchInputRef.current?.value;
-    navigate(`/${currentTag}?q=${inputValue}`);
-    dispatch(filterTasks({ searchValue: inputValue!, tag: currentTag }));
+    const inputValue = searchInputRef.current.value;
+    const encodedValue = encodeURIComponent(inputValue);
+    setSearchParams({ q: encodedValue || '' });
+    navigate(`/${currentTag}?q=${encodedValue}`);
+    dispatch(filterTasks({ searchValue: inputValue, tag: currentTag }));
   }, [searchInputRef, dispatch, currentTag]);
 
   const openModal = useCallback(() => {
@@ -78,9 +79,11 @@ function App() {
   }, []);
 
   const handleTagFilterChange = useCallback((event: any) => {
-    navigate(`/${event.target.value}/?q=${searchInputRef.current!.value}`);
+    const inputValue = searchInputRef.current!.value;
+    const encodedValue = encodeURIComponent(inputValue);
+    navigate(`/${event.target.value}?q=${encodedValue}`);
     setCurrentTag(event.target.value);
-    dispatch(filterTasks({ tag: event.target.value, searchValue: searchInputRef.current!.value }));
+    dispatch(filterTasks({ tag: event.target.value, searchValue: inputValue }));
   }, []);
 
   const resetTags = useCallback(() => {
@@ -98,7 +101,6 @@ function App() {
           border: currentTag === tag.tag ? `1px solid ${tag.color}` : "none",
           backgroundColor: tag.bgColor,
           color: tag.color,
-          // transition: "border 0.6s ease-in-out",
         }}
       >
         {tag.tag}
