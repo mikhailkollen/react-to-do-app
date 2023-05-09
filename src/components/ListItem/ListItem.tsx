@@ -21,9 +21,9 @@ export const ListItem = ({ task, isModalTask }: ListItemProps) => {
   );
 
   const changeStatus = useCallback(() => {
-    dispatch(updateTaskOnTheServer({...task, isCompleted: !task.isCompleted}));
+    dispatch(updateTaskOnTheServer({ ...task, isCompleted: !task.isCompleted }));
   }, [allTasks, task, dispatch]);
-  
+
   const changeTaskDetails = useCallback(() => {
     dispatch(editTask(task))
     // dispatch(updateTaskOnTheServer({...task, title: newTitle}));
@@ -31,10 +31,10 @@ export const ListItem = ({ task, isModalTask }: ListItemProps) => {
 
 
   const deleteTask = useCallback(() => {
-  dispatch(deleteTaskFromTheServer(task._id!));
-  const updatedTasks = allTasks.filter((t) => t._id !== task._id);
-  dispatch(setAllTasks(updatedTasks));
-}, [allTasks, task, dispatch]);
+    dispatch(deleteTaskFromTheServer(task._id!));
+    const updatedTasks = allTasks.filter((t) => t._id !== task._id);
+    dispatch(setAllTasks(updatedTasks));
+  }, [allTasks, task, dispatch]);
 
   return (
     <li>

@@ -7,7 +7,7 @@ import { setIsModalOpen } from "../../features/tasks/tasksSlice";
 import { addTask as addTaskToTheServer, updateTask as updateTaskOnTheServer } from "../../features/tasks/tasksThunk";
 
 export const Modal = () => {
-    const editedTask = useAppSelector((state) => state.tasks.editedTask);
+  const editedTask = useAppSelector((state) => state.tasks.editedTask);
   const [textInput, setTextInput] = useState(editedTask ? editedTask.title : "");
   const [invalidInput, setInvalidInput] = useState(false);
   const tagRadioRefs = useRef<HTMLInputElement[]>([]);

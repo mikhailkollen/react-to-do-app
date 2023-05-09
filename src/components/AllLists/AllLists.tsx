@@ -11,7 +11,7 @@ const AllLists = () => {
     const filteredTasks = tasks.filter((task: Task) => task.isCompleted === boolean);
     return sortTasksByUpdatedAt(filteredTasks);
   };
-  
+
   const unfinishedTasks = useMemo(() => filterTasksOnIsCompleted(false, allTasks), [allTasks]);
   const completedTasks = useMemo(() => filterTasksOnIsCompleted(true, allTasks), [allTasks]);
 

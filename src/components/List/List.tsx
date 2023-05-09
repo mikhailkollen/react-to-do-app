@@ -4,7 +4,7 @@ import "./List.css";
 
 export const List = ({ tasks,
   titleText,
-  listClassName }: ListProps) => {  
+  listClassName }: ListProps) => {
 
   return (
     <div className="list">

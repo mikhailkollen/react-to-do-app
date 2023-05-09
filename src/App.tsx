@@ -23,7 +23,7 @@ function App() {
   const navigate = useNavigate();
   const [currentTag, setCurrentTag] = useState<string>(location.pathname.split('/')[1]);
 
-const { todayTasks, isTodayTasksModalOpen, isModalOpen } = useAppSelector((state) => state.tasks);
+  const { todayTasks, isTodayTasksModalOpen, isModalOpen } = useAppSelector((state) => state.tasks);
 
   useEffect(() => {
     dispatch(getTasks());
@@ -49,7 +49,7 @@ const { todayTasks, isTodayTasksModalOpen, isModalOpen } = useAppSelector((state
       dispatch(filterTasks({ searchValue, tag: currentTag }));
     }
   }, [searchValue, currentTag, dispatch]);
-  
+
 
   const handleSearch = useCallback(() => {
     if (!searchInputRef.current) return;
@@ -79,36 +79,36 @@ const { todayTasks, isTodayTasksModalOpen, isModalOpen } = useAppSelector((state
   }, [searchInputRef, navigate, setCurrentTag, dispatch]);
 
   const tagsInputs = useMemo(() => {
-  const handleTagFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = searchInputRef.current!.value;
-    const encodedValue = encodeURIComponent(inputValue);
-    navigate(`/${event.target.value}?q=${encodedValue}`);
-    setCurrentTag(event.target.value);
-    dispatch(filterTasks({ tag: event.target.value, searchValue: inputValue }));
-  };
+    const handleTagFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const inputValue = searchInputRef.current!.value;
+      const encodedValue = encodeURIComponent(inputValue);
+      navigate(`/${event.target.value}?q=${encodedValue}`);
+      setCurrentTag(event.target.value);
+      dispatch(filterTasks({ tag: event.target.value, searchValue: inputValue }));
+    };
 
-  return tagLabels.map((tag) => (
-    <label
-      key={tag.id}
-      className="tag-label"
-      style={{
-        border: currentTag === tag.tag ? `1px solid ${tag.color}` : "none",
-        backgroundColor: tag.bgColor,
-        color: tag.color,
-      }}
-    >
-      {tag.tag}
-      <input
-        type="radio"
-        name="tag"
-        value={tag.tag}
-        className="tag-filter-button"
-        onChange={handleTagFilterChange}
-        checked={currentTag === tag.tag}
-      />
-    </label>
-  ));
-}, [currentTag, dispatch, navigate, searchInputRef]);
+    return tagLabels.map((tag) => (
+      <label
+        key={tag.id}
+        className="tag-label"
+        style={{
+          border: currentTag === tag.tag ? `1px solid ${tag.color}` : "none",
+          backgroundColor: tag.bgColor,
+          color: tag.color,
+        }}
+      >
+        {tag.tag}
+        <input
+          type="radio"
+          name="tag"
+          value={tag.tag}
+          className="tag-filter-button"
+          onChange={handleTagFilterChange}
+          checked={currentTag === tag.tag}
+        />
+      </label>
+    ));
+  }, [currentTag, dispatch, navigate, searchInputRef]);
 
   return (
     <div className="app">

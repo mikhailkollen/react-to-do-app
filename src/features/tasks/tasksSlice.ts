@@ -42,8 +42,8 @@ const tasksSlice = createSlice({
       state.allTasks = action.payload;
     },
     setIsTodayTasksModalOpen: (state, action: PayloadAction<boolean>) => {
-      
-      
+
+
       if (action.payload === true && checkIfModalShownToday() === false && state.todayTasks && state.todayTasks.length > 0) {
         console.log(current(state.todayTasks));
         state.isTodayTasksModalOpen = true;
@@ -54,7 +54,7 @@ const tasksSlice = createSlice({
       } else {
         state.isTodayTasksModalOpen = false;
       }
-      
+
     },
     setIsModalOpen: (state, action: PayloadAction<boolean>) => {
       state.editedTask = action.payload ? state.editedTask : null;
