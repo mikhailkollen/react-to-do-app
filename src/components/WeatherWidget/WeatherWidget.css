@@ -1,0 +1,44 @@
+.widgets-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.weather-widget {
+  max-width: 332px;
+  min-width: 250px;
+  height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 22px;
+}
+
+.weather-and-temp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.weather-and-temp h2 {
+  font-family: "Nunito", sans-serif;
+  color: #1d1d1d;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.weather-widget-city {
+  font-family: "Nunito", sans-serif;
+  color: #838383;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.weather-icon {
+  width: 64px;
+  height: 64px;
+}

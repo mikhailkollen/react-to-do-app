@@ -1,0 +1,104 @@
+.today-tasks-modal ul {
+  overflow-y: scroll;
+}
+
+.today-tasks-modal-button {
+  width: 100%;
+  background: #3c86f4;
+  margin-top: 31px;
+  color: #ffffff;
+  transition: all 0.6s ease-in-out;
+}
+
+.today-tasks-modal .list-title {
+  align-self: center;
+}
+
+.today-tasks-modal-list {
+  width: 100%;
+}
+
+.today-tasks-modal-list .list-item-label {
+  width: 100%;
+}
+
+.today-tasks-modal {
+  min-width: 350px;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  left: calc(50% - 250px);
+  padding: 24px 32px;
+}
+
+.today-tasks-modal label {
+  margin-bottom: 15px;
+  cursor: default;
+}
+
+.today-tasks-modal .tag-label {
+  cursor: default;
+}
+
+.today-tasks-modal .task-title {
+  font-size: 16px;
+}
+
+.today-tasks-modal-list {
+  padding: 9px;
+}
+.today-tasks-modal-text {
+  font-family: "Nunito", sans-serif;
+  color: #1d1d1d;
+  font-size: 18px;
+  font-weight: 500;
+
+  text-align: left;
+  align-self: flex-start;
+}
+
+.today-tasks-modal-list .list-item-tag-container {
+  width: 70%;
+}
+.today-tasks-modal ul li {
+  margin: 9px 0;
+  padding: 0;
+}
+
+.today-tasks-modal .list-title {
+  padding-bottom: 23px;
+}
+
+::-webkit-scrollbar {
+  height: 20px;
+  width: 11px;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f2f4f7;
+  min-height: 17px;
+  border: 1px solid #eaecf0;
+  border-radius: 58px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d9d9d9;
+  border-radius: 58px;
+  cursor: pointer;
+}
+
+@supports (scrollbar-color: #d9d9d9 #f2f4f7) {
+  * {
+    scrollbar-color: #d9d9d9 #f2f4f7;
+    scrollbar-width: thin;
+  }
+}
+
+@media only screen and (min-width: 1080px) {
+  .today-tasks-modal-button:hover {
+    filter: brightness(1.1);
+  }
+}
