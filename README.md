@@ -19,7 +19,7 @@ This is a To-Do App built with React, React Router, Redux, TypeScript, and it us
 - React Router
 - Redux
 - TypeScript
-- RESTful API (<https://github.com/mikhailkollen/data-api>)
+- [RESTful API](<https://github.com/mikhailkollen/data-api>)
 
 ## Getting Started
 
