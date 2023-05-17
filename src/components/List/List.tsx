@@ -2,9 +2,7 @@ import { ListItem } from "../ListItem/ListItem";
 import { ListProps, Task } from "../../types";
 import "./List.css";
 
-export const List = ({ filteredTasks,
-  allTasks,
-  setAllTasks,
+export const List = ({ tasks,
   titleText,
   listClassName }: ListProps) => {
 
@@ -12,10 +10,10 @@ export const List = ({ filteredTasks,
     <div className="list">
       <h2 className="list-title">{titleText}</h2>
       <ul className={listClassName}>
-        {filteredTasks.map((task: Task) => {
+        {tasks.map((task: Task) => {
           return (
             <ListItem
-              task={task} isModalTask={false} allTasks={allTasks} setAllTasks={setAllTasks}
+              task={task} isModalTask={false}
               key={task._id}
             />
           );

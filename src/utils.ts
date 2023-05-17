@@ -1,4 +1,4 @@
-import { Task, Id, Tasks } from "./types";
+import { Task, Tasks } from "./types";
 
 export const tagLabels = [
   { id: 1, tag: "health", bgColor: "#3c86f44f", color: "#0053CF" },
@@ -7,7 +7,7 @@ export const tagLabels = [
   { id: 4, tag: "other", bgColor: "#FFECC7", color: "#EA8C00" },
 ];
 
-export const checkIfToday = (date: Date): boolean => {
+export const checkIfToday = (date: string): boolean => {
   const today = new Date();
   const checkDate = new Date(date);
   return (
@@ -17,7 +17,7 @@ export const checkIfToday = (date: Date): boolean => {
   );
 };
 
-export const checkIfTomorrow = (date: Date): boolean => {
+export const checkIfTomorrow = (date: string): boolean => {
   const today = new Date();
   const checkDate = new Date(date);
   return (
@@ -35,59 +35,6 @@ export const sortTasksByUpdatedAt = (tasks: Task[]): Tasks => {
   });
 };
 
-export const addTaskToTheServer = async (task: Task) => {
-  const API_URL = import.meta.env.VITE_DATA_API_URL;
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(task),
-    });
-    const data = await response.json();
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-
-};
-
-export const deleteTaskFromTheServer = async (id: Id) => {
-  const API_URL = import.meta.env.VITE_DATA_API_URL;
-  try {
-    const response = await fetch(`${API_URL}${id}`, {
-      method: "DELETE",
-    });
-    const data = await response.json();
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const updateTaskOnTheServer = async (task: Task) => {
-  const API_URL = import.meta.env.VITE_DATA_API_URL;
-  try {
-    const response = await fetch(
-      `${API_URL}${task._id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(task),
-      }
-    );
-    const data = await response.json();
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 export const checkIfModalShownToday = (): boolean => {
   const localStorageModal = localStorage.getItem("todayTasksShown");
@@ -122,7 +69,7 @@ export const filterTodayTasks = (tasks: Task[]): Tasks | [] => {
   }
 };
 
-export const formatDate = (date: Date): string => {
+export const formatDate = (date: string): string => {
   if (checkIfToday(date)) {
     return "Today";
   } else if (checkIfTomorrow(date)) {

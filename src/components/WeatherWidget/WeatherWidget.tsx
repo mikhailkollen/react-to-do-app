@@ -3,28 +3,29 @@ import { useState, useEffect, useCallback } from "react";
 import { WeatherData } from "../../types";
 
 export const WeatherWidget = () => {
+
   const API_URL = import.meta.env.VITE_WEATHER_API_BASE_URL;
   const requestUserLocation = useCallback(
-  () => {
-    return new Promise<string>((resolve) => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            resolve(`${lat},${lon}`);
-          },
-          () => {
-            resolve("Tbilisi");
-          }
-        );
-      } else {
-        resolve("Tbilisi");
-      }
-    });
-  },
-  []
-);
+    () => {
+      return new Promise<string>((resolve) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const lat = position.coords.latitude;
+              const lon = position.coords.longitude;
+              resolve(`${lat},${lon}`);
+            },
+            () => {
+              resolve("Tbilisi");
+            }
+          );
+        } else {
+          resolve("Tbilisi");
+        }
+      });
+    },
+    []
+  );
 
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(true);

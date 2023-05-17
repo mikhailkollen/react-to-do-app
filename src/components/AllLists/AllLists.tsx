@@ -1,21 +1,23 @@
 import { List } from "../List/List";
-import { Task, AllListsProps } from "../../types";
+import { Task } from "../../types";
 import { sortTasksByUpdatedAt } from "../../utils";
+import { useAppSelector } from "../../app/hooks";
+import { useMemo } from 'react';
 
-const AllLists = ({ allTasks, setAllTasks }: AllListsProps) => {
+const AllLists = () => {
+  const allTasks = useAppSelector((state) => state.tasks.filteredTasks);
 
-  const filterTasksOnIsCompleted = (boolean: boolean) => {
-    const filteredTasks = allTasks.filter((task: Task) => task.isCompleted === boolean);
+  const filterTasksOnIsCompleted = (boolean: boolean, tasks: Task[]) => {
+    const filteredTasks = tasks.filter((task: Task) => task.isCompleted === boolean);
     return sortTasksByUpdatedAt(filteredTasks);
   };
-  const unfinishedTasks = filterTasksOnIsCompleted(false);
-  const completedTasks = filterTasksOnIsCompleted(true);
+
+  const unfinishedTasks = useMemo(() => filterTasksOnIsCompleted(false, allTasks), [allTasks]);
+  const completedTasks = useMemo(() => filterTasksOnIsCompleted(true, allTasks), [allTasks]);
 
   const completedTasksList = (
     <List
-      filteredTasks={completedTasks}
-      allTasks={allTasks}
-      setAllTasks={setAllTasks}
+      tasks={completedTasks}
       titleText="Completed Tasks"
       listClassName="completed-tasks-list"
     />
@@ -23,9 +25,7 @@ const AllLists = ({ allTasks, setAllTasks }: AllListsProps) => {
 
   const unfinishedTasksList = (
     <List
-      filteredTasks={unfinishedTasks}
-      allTasks={allTasks}
-      setAllTasks={setAllTasks}
+      tasks={unfinishedTasks}
       titleText="All Tasks"
       listClassName="unfinished-tasks-list"
     />

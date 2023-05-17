@@ -1,36 +1,37 @@
-import { setModalShown, setCorrectTitle } from "../../utils";
+import { setCorrectTitle, setModalShown } from "../../utils";
 import { ListItem } from "../ListItem/ListItem";
 import Button from "../Button/Button";
-import { Task, TodayTasksModalProps } from "../../types";
+import { Task } from "../../types";
 import "./TodayTasksModal.css"
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
+import { setIsTodayTasksModalOpen } from "../../features/tasks/tasksSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
-
-const TodayTasksModal = ({ todayTasks, setIsTodayTasksModalOpen }: TodayTasksModalProps) => {
-
-  useEffect(() => {
-    setModalShown();
-    return () => { };
-  }, []);
+const TodayTasksModal = () => {
+  const dispatch = useAppDispatch();
 
   const closeModal = useCallback(() => {
-    setIsTodayTasksModalOpen(false);
-  }, [setIsTodayTasksModalOpen]);
+    dispatch(setIsTodayTasksModalOpen(false));
+    setModalShown()
+
+  }, [dispatch]);
+
+  const todayTasks = useAppSelector((state) => state.tasks.todayTasks);
 
   return (
     <div className="today-tasks-modal modal">
       <h2 className="list-title">{setCorrectTitle()}</h2>
       <p className="today-tasks-modal-text">
-        You have {todayTasks.length} task(s) planned for today:
+        You have {todayTasks?.length} task(s) planned for today:
       </p>
       <ul className="today-tasks-modal-list">
-        {(todayTasks.length > 0) && todayTasks.map((task: Task) => {
+        {(todayTasks && todayTasks.length > 0) && todayTasks.map((task: Task) => {
           return (
             <ListItem task={task} isModalTask={true} key={task._id} />
           );
         })}
       </ul>
-      <Button className="today-tasks-modal-button" text="OK" onClick={closeModal} />
+      <Button className="today-tasks-modal-button" text="OK" onClick={() => closeModal()} />
     </div>
   );
 };
