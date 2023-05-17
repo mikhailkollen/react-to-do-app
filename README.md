@@ -1,4 +1,4 @@
-# To-Do App Readme
+# To-Do App README
 
 This is a To-Do App built with React, React Router, Redux, TypeScript, and it uses a RESTful API for managing and storing tasks. The app allows users to create, view, update, and delete tasks. It also provides features like filtering tasks by tags and searching tasks.
 
